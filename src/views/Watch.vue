@@ -53,6 +53,11 @@
         <tr>
           <td>{{ item.text }}</td>
           <td>{{ setCalDate(item.createdAt) }}</td>
+          <td>
+            <v-btn icon @click="deleteComent(item)">
+              <v-icon>mdi-delete-forever</v-icon>
+            </v-btn>
+          </td>
         </tr>
       </template>
       </v-data-table>
@@ -105,6 +110,7 @@ export default {
     headers: [
       { text: '작성내용', align: 'start', value: 'text' },
       { text: '작성시간', value: 'createdAt' },
+      { text: 'ACT', value: 'ACT'},
     ],
   }),
   components: {
@@ -258,6 +264,26 @@ if (videoId) {
         });
 }
     },
+
+            async deleteComent(comment) {
+          if(confirm('삭제하시겠습니까?')) {
+            await axios
+            .delete(process.env.VUE_APP_API + '/comments/' + comment.id
+            , {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            })
+            .then((response) => {
+              console.log('deleteComent - response : ', response);
+              alert('삭제되었습니다.');
+              this.getCategories();
+            })
+            .catch((error) => {
+              console.log('deleteComent - error : ', error);
+            });
+          } else return;
+        },
   },
   mounted() {
     this.getVideos();
