@@ -81,8 +81,8 @@ import Validate from '@/mixins/Validate.vue';
               await axios
                 .post(process.env.VUE_APP_API + '/comments', {
                   'text' : this.text,
-                //   'videoId' : this.watchVideo.id,
-                //   'userId': JSON.parse(localStorage.getItem('user')).id,
+                  'videoId' : this.watchVideo.id,
+                  'userId': JSON.parse(localStorage.getItem('user')).id,
                 },
                 {
                   headers: {

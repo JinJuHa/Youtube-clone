@@ -38,8 +38,21 @@
 
         <div class="comment">
               <p>댓글 {{ watchVideo.comments }} 개</p>
-              <v-text-field placeholder="댓글 추가하기" @click="openCommentModal">
-              </v-text-field>
+              <!-- <v-text-field placeholder="댓글 추가하기" @click="openCommentModal">
+              </v-text-field> -->
+
+      <div class="commentadd">
+        <form v-on:submit.prevent="submitForm"> 
+          <div>
+            <label for="com">댓글</label>
+            <input id="commentAdd" type="commentAdd" v-model="text">
+              <!-- <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
+              </v-text-field> -->
+          </div>
+          <button type="submit">입력</button>
+        </form>
+    </div>
+
               <!-- <v-btn class="commentchuga" @click="openCommentModal">댓글 등록</v-btn> -->
 
         <v-tabs class="mt-5" v-model="tab">
@@ -62,9 +75,9 @@
       </template>
       </v-data-table>
       </v-tab-item>
-      <CommentModal
+      <!-- <CommentModal
       :openDialog="statusModal"
-      v-on:closeDialog="closeCommentModal" />
+      v-on:closeDialog="closeCommentModal" /> -->
     </v-tabs-items>
           
         </div>
@@ -86,7 +99,7 @@
 import axios from 'axios';
 import SetFormat from '@/mixins/SetFormat.vue';
 import VideoListCard from '@/components/VideoListCard.vue';
-import CommentModal from '@/components/Modal/CommentModal.vue';
+//import CommentModal from '@/components/Modal/CommentModal.vue';
 
 export default {
   name: 'Watch',
@@ -103,6 +116,8 @@ export default {
     userId:"",
     feeling:"",
     comments: [],
+    text:'',
+    item:'',
 
     tab: null,
     loading: false,
@@ -114,7 +129,7 @@ export default {
     ],
   }),
   components: {
-    CommentModal,
+    // CommentModal,
     VideoListCard,
   },
   watch: {
@@ -125,19 +140,19 @@ export default {
     },
     watchVideo() {
       this.videoUrl = `${process.env.VUE_APP_URL}/uploads/videos/${this.watchVideo.url}`;
-      // console.log('first this.watchVideo', this.watchVideo);
+      console.log('first this.watchVideo', this.watchVideo);
       this.getComment();
     },
   },
   methods: {
-    openCommentModal() {
-      this.statusModal = true;
-      console.log('-- open : ', this.statusModal);
-    },
-    closeCommentModal() {
-      this.statusModal = false;
-      console.log('-- close : ', this.statusModal);
-    },
+    // openCommentModal() {
+    //   this.statusModal = true;
+    //   console.log('-- open : ', this.statusModal);
+    // },
+    // closeCommentModal() {
+    //   this.statusModal = false;
+    //   console.log('-- close : ', this.statusModal);
+    // },
 
     async getWatchData(id) {
       //console.log(this.$route.params.id);
@@ -283,6 +298,30 @@ if (videoId) {
               console.log('deleteComent - error : ', error);
             });
           } else return;
+        },
+
+          async submitForm() {
+          console.log('비디오 아이디 찾아',this.watchVideo.id);
+
+          await axios
+            .post(process.env.VUE_APP_API + '/comments', {
+              'text' : this.text,
+              'videoId' : this.watchVideo.id,
+              'userId': JSON.parse(localStorage.getItem('user')).id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            })
+            .then((response) => {
+              console.log('submitForm - response : ', response);
+              this.comments = response.data.data;
+              this.getWatchData(this.$route.params.id);
+            })
+            .catch((error) => {
+              console.log('submitForm - error : ', error);
+            });
         },
   },
   mounted() {
