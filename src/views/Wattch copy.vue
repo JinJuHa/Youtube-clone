@@ -44,24 +44,41 @@
       <div class="commentadd">
         <form v-on:submit.prevent="submitForm"> 
           <div>
-            <!-- <label class="commenTitle">댓글</label> -->
-            <!-- <input class="commentAdd" type="commentAdd" v-model="text"> -->
-              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
-              </v-text-field>
+            <label for="com">댓글</label>
+            <input id="commentAdd" type="commentAdd" v-model="text">
+              <!-- <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
+              </v-text-field> -->
           </div>
-          <button class="commentAddB" type="submit">입력</button>
+          <button type="submit">입력</button>
         </form>
     </div>
 
+              <!-- <v-btn class="commentchuga" @click="openCommentModal">댓글 등록</v-btn> -->
 
-      <div class="commentlist">
-        <CommentList
-          v-for="comment in comments"
-          :key="comment.id"
-          :comment="comment"></CommentList>
-      </div>
-    <!-- </div> -->
-
+        <v-tabs class="mt-5" v-model="tab">
+          <v-tab>댓글 리스트</v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="tab">
+      <!-- 새로만든거 -->
+      <v-tab-item>
+      <v-data-table  :headers="headers" :items="comments" >
+      <template v-slot:item="{ item }">
+        <tr>
+          <td>{{ item.text }}</td>
+          <td>{{ setCalDate(item.createdAt) }}</td>
+          <td>
+            <v-btn icon @click="deleteComent(item)">
+              <v-icon>mdi-delete-forever</v-icon>
+            </v-btn>
+          </td>
+        </tr>
+      </template>
+      </v-data-table>
+      </v-tab-item>
+      <!-- <CommentModal
+      :openDialog="statusModal"
+      v-on:closeDialog="closeCommentModal" /> -->
+    </v-tabs-items>
           
         </div>
       </div>
@@ -82,7 +99,7 @@
 import axios from 'axios';
 import SetFormat from '@/mixins/SetFormat.vue';
 import VideoListCard from '@/components/VideoListCard.vue';
-import CommentList from '@/components/CommentList.vue';
+//import CommentModal from '@/components/Modal/CommentModal.vue';
 
 export default {
   name: 'Watch',
@@ -100,6 +117,7 @@ export default {
     feeling:"",
     comments: [],
     text:'',
+    item:'',
 
     tab: null,
     loading: false,
@@ -111,11 +129,10 @@ export default {
     ],
   }),
   components: {
+    // CommentModal,
     VideoListCard,
-    CommentList
   },
   watch: {
-
     $route(to, from) {
       if (to.path != from.path) {
         this.getWatchData(this.$route.params.id);
@@ -372,7 +389,6 @@ if (videoId) {
 .comment {
   padding-top: 25px;
   padding-bottom: 25px;
-  padding-left: 10px;
 }
 
 </style>
