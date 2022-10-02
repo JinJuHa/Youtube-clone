@@ -44,7 +44,7 @@
           <div>
             <!-- <label class="commenTitle">댓글</label> -->
             <!-- <input class="commentAdd" type="commentAdd" v-model="text"> -->
-              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
+              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text" autocomplete="off">
               </v-text-field>
           </div>
           <div class="commentAddB">
@@ -58,7 +58,12 @@
         <CommentList
           v-for="comment in comments"
           :key="comment.id"
-          :comment="comment"></CommentList>
+          :comment="comment"
+          @deleteComment=deleteComent(comment)></CommentList>
+
+          <!-- <AddCommentList
+          :ker="replies.id"
+          :replies="replies"></AddCommentList> -->
       </div>
     <!-- </div> -->
 
@@ -83,6 +88,7 @@ import axios from 'axios';
 import SetFormat from '@/mixins/SetFormat.vue';
 import VideoListCard from '@/components/VideoListCard.vue';
 import CommentList from '@/components/CommentList.vue';
+//import AddCommentList from '@/components/AddCommentList.vue';
 
 export default {
   name: 'Watch',
@@ -100,6 +106,7 @@ export default {
     feeling:"",
     comments: [],
     text:'',
+    replies: [],
 
     tab: null,
     loading: false,
@@ -112,7 +119,8 @@ export default {
   }),
   components: {
     VideoListCard,
-    CommentList
+    CommentList,
+    //AddCommentList
   },
   watch: {
     $route(to, from) {
@@ -122,8 +130,9 @@ export default {
     },
     watchVideo() {
       this.videoUrl = `${process.env.VUE_APP_URL}/uploads/videos/${this.watchVideo.url}`;
-      console.log('first this.watchVideo', this.watchVideo);
+      //console.log('first this.watchVideo', this.watchVideo);
       this.getComment();
+      this.getReply();
     },
   },
   methods: {
@@ -254,6 +263,25 @@ if (videoId) {
 }
     },
 
+         async getReply() {
+      const videoId = this.watchVideo.id;
+if (videoId) {
+      await axios
+        .get(process.env.VUE_APP_API + '/replies', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        })
+        .then((response) => {
+          console.log('getReply - response : ', response, response.data.data);
+          this.replies = response.data.data;
+        })
+        .catch((error) => {
+          console.log('getReply - error : ', error);
+        });
+}
+    },
+
             async deleteComent(comment) {
           if(confirm('삭제하시겠습니까?')) {
             await axios
@@ -266,7 +294,6 @@ if (videoId) {
             .then((response) => {
               console.log('deleteComent - response : ', response);
               alert('삭제되었습니다.');
-              this.getCategories();
             })
             .catch((error) => {
               console.log('deleteComent - error : ', error);
@@ -291,6 +318,7 @@ if (videoId) {
             .then((response) => {
               console.log('submitForm - response : ', response);
               this.getWatchData(this.$route.params.id);
+              this.text = null;
               //console.log('submitForm함수 끝')
             })
             .catch((error) => {
@@ -301,7 +329,7 @@ if (videoId) {
   mounted() {
     this.getVideos();
     this.getWatchData(this.$route.params.id);
-    // this.getComment();
+    //this.getComment();
   },
 };
 </script>
