@@ -38,8 +38,6 @@
 
         <div class="comment">
               <p>댓글 {{ watchVideo.comments }} 개</p>
-              <!-- <v-text-field placeholder="댓글 추가하기" @click="openCommentModal">
-              </v-text-field> -->
 
       <div class="commentadd">
         <form v-on:submit.prevent="submitForm"> 
@@ -49,7 +47,9 @@
               <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
               </v-text-field>
           </div>
-          <button class="commentAddB" type="submit">입력</button>
+          <div class="commentAddB">
+             <v-btn type="submit">입력</v-btn>
+          </div>
         </form>
     </div>
 
@@ -115,7 +115,6 @@ export default {
     CommentList
   },
   watch: {
-
     $route(to, from) {
       if (to.path != from.path) {
         this.getWatchData(this.$route.params.id);
@@ -128,14 +127,6 @@ export default {
     },
   },
   methods: {
-    // openCommentModal() {
-    //   this.statusModal = true;
-    //   console.log('-- open : ', this.statusModal);
-    // },
-    // closeCommentModal() {
-    //   this.statusModal = false;
-    //   console.log('-- close : ', this.statusModal);
-    // },
 
     async getWatchData(id) {
       //console.log(this.$route.params.id);
@@ -284,7 +275,7 @@ if (videoId) {
         },
 
           async submitForm() {
-          console.log('비디오 아이디 찾아',this.watchVideo.id);
+          //console.log('비디오 아이디 찾아',this.watchVideo.id);
 
           await axios
             .post(process.env.VUE_APP_API + '/comments', {
@@ -299,8 +290,8 @@ if (videoId) {
             })
             .then((response) => {
               console.log('submitForm - response : ', response);
-              this.comments = response.data.data;
               this.getWatchData(this.$route.params.id);
+              //console.log('submitForm함수 끝')
             })
             .catch((error) => {
               console.log('submitForm - error : ', error);
@@ -310,7 +301,7 @@ if (videoId) {
   mounted() {
     this.getVideos();
     this.getWatchData(this.$route.params.id);
-    this.getComment();
+    // this.getComment();
   },
 };
 </script>
@@ -374,5 +365,12 @@ if (videoId) {
   padding-bottom: 25px;
   padding-left: 10px;
 }
+.commentadd {
+  margin: 10px;
+}
 
+.commentAddB {
+  display: flex;
+  justify-content: right;
+}
 </style>
