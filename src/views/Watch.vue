@@ -53,12 +53,14 @@
     </div>
 
 
+<!-- 여기서부터 댓글 리스트임 -->
       <div class="commentlist">
         <CommentList
           v-for="comment in comments"
           :key="comment.id"
           :comment="comment"
-          @deleteComment=deleteComent(comment)></CommentList>
+          @deleteComment=deleteComent(comment)
+          ></CommentList>
       </div>
 
           
@@ -82,12 +84,12 @@ import axios from 'axios';
 import SetFormat from '@/mixins/SetFormat.vue';
 import VideoListCard from '@/components/VideoListCard.vue';
 import CommentList from '@/components/CommentList.vue';
-//import AddCommentList from '@/components/AddCommentList.vue';
 
 export default {
   name: 'Watch',
   mixins: [SetFormat],
   data: () => ({
+    show: false,
     statusModal: false,
 
     videos: [],
@@ -97,10 +99,12 @@ export default {
     type:"",
     videoId:"",
     userId:"",
+    commentId:"",
     feeling:"",
     comments: [],
     text:'',
-    replies: [],
+    // replies: [],
+    //Replytext: '',
 
     tab: null,
     loading: false,
@@ -114,7 +118,6 @@ export default {
   components: {
     VideoListCard,
     CommentList,
-    //AddCommentList
   },
   watch: {
     $route(to, from) {
@@ -132,7 +135,6 @@ export default {
   methods: {
 
     async getWatchData(id) {
-      console.log('fff',id);
       this.videoLoading = true;
       this.watchVideo = {};
 
@@ -151,7 +153,6 @@ if(id !== 'comments') {
             response.data.data
           );
           this.watchVideo = response.data.data;
-          console.log('여디ㅣ',this.watchVideo);
           this.videoLoading = false;
         })
         .catch((error) => {
@@ -245,7 +246,8 @@ if(id !== 'comments') {
 
      async getComment() {
       const videoId = this.watchVideo.id;
-      console.log(this.watchVideo.id);
+      //console.log('코멘트아이디확인',this.comments.id);
+      //console.log(this.watchVideo.id);
 if (videoId) {
       await axios
         .get(process.env.VUE_APP_API + '/comments/' + videoId + '/videos', {
@@ -264,8 +266,10 @@ if (videoId) {
     },
 
          async getReply() {
-      const videoId = this.watchVideo.id;
-if (videoId) {
+          //console.log(this.commentId)
+          //console.log('코멘트 아이디',this.comment.id)
+//       const videoId = this.watchVideo.id;
+// if (videoId) {
       await axios
         .get(process.env.VUE_APP_API + '/replies', {
           headers: {
@@ -279,10 +283,11 @@ if (videoId) {
         .catch((error) => {
           console.log('getReply - error : ', error);
         });
-}
+//}
     },
 
             async deleteComent(comment) {
+              // console.log('코멘트아이디확인',comment.id);
             const videoId = this.watchVideo.id;
           if (videoId) {
               // console.log('del',this.watchVideo);
@@ -333,6 +338,30 @@ if (videoId) {
               console.log('submitForm - error : ', error);
             });
         },
+
+        //   async AddReplychuga() {
+        //   console.log('코멘트 아이디', this.comment)
+        //   await axios
+        //     .post(process.env.VUE_APP_API + '/replies', {
+        //       'text' : this.Replytext,
+        //       'commentId' : this.comment.id,
+        //       'userId': JSON.parse(localStorage.getItem('user')).id,
+        //     },
+        //     {
+        //       headers: {
+        //         Authorization: `Bearer ${localStorage.getItem('token')}`,
+        //       },
+        //     })
+        //     .then((response) => {
+        //       console.log('AddReply - response : ', response);
+        //       //this.getWatchData(this.$route.params.id);
+        //       this.Replytext = null;
+        //     })
+        //     .catch((error) => {
+        //       console.log('AddReply - error : ', error);
+        //     });
+        // },
+
   },
   mounted() {
     //console.log('sss',this.$route.params);

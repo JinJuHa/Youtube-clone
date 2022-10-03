@@ -25,7 +25,8 @@
             <p class="comText">{{ comment.text }}</p>
 
             <div class="BBB" >
-              <v-btn @click="show = !show">댓글{{ comment.replies.length }}</v-btn>
+              <v-btn class="bB" @click="show = !show">댓글{{ comment.replies.length }}
+                </v-btn>
 
                <v-btn icon class="delB" @click="deleteComment">
                  <v-icon>mdi-delete-forever</v-icon>
@@ -34,35 +35,152 @@
       </div>
     </v-row>
 
-          <v-expand-transition>
+    <v-expand-transition>
         <div v-show="show">
-                <v-text-field id="AddReplycom" type="AddReplycom"  placeholder="댓글 추가하기"></v-text-field>
+          <div class="AddReplyAdd">
+            <form v-on:submit.prevent="submitReplyForm">
+                <v-text-field id="AddReplycom" type="AddReplycom"  placeholder="댓글 추가하기" v-model="Replytext"></v-text-field>
+          <div class="AddReplyB">
+             <v-btn type="submit">입력</v-btn>
+          </div>
+            </form>
+          </div>
                 <!-- 대댓글 리스트 -->
+          <div class="AddCommentList">
+            <!-- <AddCommentList
+            v-for="reply in replies"
+            :key="reply.id"
+            :reply="reply">
+          </AddCommentList> -->
+
+            <!-- v-for="replies in comment"
+          :key=" replies._id"
+          :replies="replies" -->
+            <v-card flat tile class="AddCommentList"
+            >
+                <div class="AddList">
+                              <v-row
+                          class="spacer"
+                          no-gutters
+                        >
+                          <v-col
+                            cols="4"
+                            sm="2"
+                            md="1"
+                          >
+                <div class="AddChannelProfile">
+                    <!-- <v-avatar size="27px" color="red" class="white--text">
+                      <h5>{{ comment.userId.channelName.split('')[0].toUpperCase() }}</h5>
+                    </v-avatar> -->
+                  </div>
+                  </v-col>
+                  <div class="commentchuga">
+                        <!-- <span class="comName">{{ comment.userId.channelName }}</span>
+                        <span class="comTime">{{ setCalDate(comment.createdAt) }}</span> -->
+                        <p class="comText">{{ comment.replies }}</p>
+                        <!-- <v-btn @click="deleteComment">삭제</v-btn> -->
+                  </div>
+                          
+                              </v-row>
+                </div>
+              </v-card>
+          </div>
         </div>
-        </v-expand-transition>
+    </v-expand-transition>
 
     </div>
   </v-card>
 </template>
 <script>
 import SetFormat from '@/mixins/SetFormat.vue';
+import axios from 'axios';
+//import AddCommentList from '@/components/AddCommentList.vue'
 
 export default {
   name: 'CommentList',
   mixins: [SetFormat],
   data: () => ({
     show: false,
+    Replytext: '',
+    replies: [],
   }),
-  props: ['comment'],
+    props: {
+    comment: {
+      type: Object,
+      required: true,
+    },
+    // replies: {
+    //   type: Object,
+    //   required: true,
+    // },
+  },
 
   computed: {
+  },
+  components: {
+    //AddCommentList,
   },
 
   methods: {
     deleteComment(){
       this.$emit('deleteComment');
     },
+    // submitReplyForm(){
+    //   this.$emit('submitReplyForm', this.Replytext, this.comment);
+    // },
+    // data(){
+    //   return {
+    //     Replytext:'',
+    //   };
+    // },
+          async submitReplyForm() {
+          //console.log('코멘트 아이디', this.comment)
+          await axios
+            .post(process.env.VUE_APP_API + '/replies', {
+              'text' : this.Replytext,
+              'commentId' : this.comment.id,
+              'userId': JSON.parse(localStorage.getItem('user')).id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            })
+            .then((response) => {
+              console.log('AddReplychuga - response : ', response);
+              // this.getWatchData(this.$route.params.id);
+              this.Replytext = null;
+              //this.getReply();
+            })
+            .catch((error) => {
+              console.log('AddReplychuga - error : ', error);
+            });
+        },
+
+//         async getReply() {
+//           //console.log(this.commentId)
+//           //console.log('코멘트 아이디',this.comment.id)
+// //       const videoId = this.watchVideo.id;
+// // if (videoId) {
+//       await axios
+//         .get(process.env.VUE_APP_API + '/replies', {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem('token')}`,
+//           },
+//         })
+//         .then((response) => {
+//           console.log('getReply - response : ', response, response.data.data);
+//           this.replies = response.data.data;
+//         })
+//         .catch((error) => {
+//           console.log('getReply - error : ', error);
+//         });
+// //}
+//     },
   },
+  // mounted() {
+  //   this.getReply();
+  // }
 };
 </script>
 <style>
@@ -89,6 +207,7 @@ export default {
 .comText {
   margin-top: 5px;
   margin-bottom: 8px;
+  background-color: rgb(250, 250, 250) !important;
 }
 
 .BBB {
@@ -96,4 +215,12 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+/* .bB {
+  width: 64px;
+  box-shadow: none;
+} */
+.commentchuga {
+  background-color: rgb(250, 250, 250) !important;
+}
+
 </style>

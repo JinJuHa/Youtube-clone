@@ -1,6 +1,6 @@
 <template>
-  <v-card flat tile class="AddCommentList" router :to="`/watch/replies`">
-    <div class="commentList">
+  <v-card flat tile class="AddCommentList">
+    <div class="AddList">
                   <v-row
               class="spacer"
               no-gutters
@@ -10,20 +10,17 @@
                 sm="2"
                 md="1"
               >
-     <div class="channelProfile">
-        <v-avatar size="40px" color="red" class="white--text">
-            <v-img
-            v-if="comment.userId.photoUrl !== 'no-photo.jpg'"
-            :src="`${process.env.VUE_APP_URL}/uploads/avatars/${channel.photoUrl}`"></v-img>
-          <h3>{{ comment.userId.channelName.split('')[0].toUpperCase() }}</h3>
+     <div class="AddChannelProfile">
+        <v-avatar size="27px" color="red" class="white--text">
+          <h5>{{ reply.userId.channelName.split('')[0].toUpperCase() }}</h5>
         </v-avatar>
       </div>
       </v-col>
       <div class="commentchuga">
-            <span class="comName">{{ comment.userId.channelName }}</span>
-            <span class="comTime">{{ setCalDate(comment.createdAt) }}</span>
-            <p class="comText">{{ comment.text }}</p>
-            <v-btn @click="deleteComment">삭제</v-btn>
+            <span class="comName">{{ reply.userId.channelName }}</span>
+            <span class="comTime">{{ setCalDate(reply.createdAt) }}</span>
+            <p class="comText">{{ reply.text }}</p>
+            <!-- <v-btn @click="deleteComment">삭제</v-btn> -->
       </div>
               
                   </v-row>
@@ -34,12 +31,12 @@
 import SetFormat from '@/mixins/SetFormat.vue';
 
 export default {
-  name: 'CommentList',
+  name: 'AddCommentList',
   mixins: [SetFormat],
   data: () => ({
-    comments: [],
+    replies: [],
   }),
-  props: ['comment'],
+  props: ['reply'],
 
   computed: {
   },
@@ -49,4 +46,8 @@ export default {
 };
 </script>
 <style>
+.AddCommentList {
+    background-color: rgb(250, 250, 250) !important;
+    padding: 10px;
+}
 </style>
