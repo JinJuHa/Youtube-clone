@@ -38,13 +38,12 @@
 
         <div class="comment">
               <p>댓글 {{ watchVideo.comments }} 개</p>
-
       <div class="commentadd">
         <form v-on:submit.prevent="submitForm"> 
           <div>
             <!-- <label class="commenTitle">댓글</label> -->
             <!-- <input class="commentAdd" type="commentAdd" v-model="text"> -->
-              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text" autocomplete="off">
+              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
               </v-text-field>
           </div>
           <div class="commentAddB">
@@ -60,12 +59,7 @@
           :key="comment.id"
           :comment="comment"
           @deleteComment=deleteComent(comment)></CommentList>
-
-          <!-- <AddCommentList
-          :ker="replies.id"
-          :replies="replies"></AddCommentList> -->
       </div>
-    <!-- </div> -->
 
           
         </div>
@@ -138,10 +132,12 @@ export default {
   methods: {
 
     async getWatchData(id) {
-      //console.log(this.$route.params.id);
+      console.log('fff',id);
       this.videoLoading = true;
       this.watchVideo = {};
 
+if(id !== 'comments') {
+  // console.log('1');
       await axios
         .get(process.env.VUE_APP_API + `/videos/${id}`, {
           headers: {
@@ -155,11 +151,14 @@ export default {
             response.data.data
           );
           this.watchVideo = response.data.data;
+          console.log('여디ㅣ',this.watchVideo);
           this.videoLoading = false;
         })
         .catch((error) => {
           console.log('getWatchData - error : ', error);
         });
+      
+}
     },
     async getVideos() {
       await axios
@@ -246,6 +245,7 @@ export default {
 
      async getComment() {
       const videoId = this.watchVideo.id;
+      console.log(this.watchVideo.id);
 if (videoId) {
       await axios
         .get(process.env.VUE_APP_API + '/comments/' + videoId + '/videos', {
@@ -283,6 +283,9 @@ if (videoId) {
     },
 
             async deleteComent(comment) {
+            const videoId = this.watchVideo.id;
+          if (videoId) {
+              // console.log('del',this.watchVideo);
           if(confirm('삭제하시겠습니까?')) {
             await axios
             .delete(process.env.VUE_APP_API + '/comments/' + comment.id
@@ -293,17 +296,21 @@ if (videoId) {
             })
             .then((response) => {
               console.log('deleteComent - response : ', response);
+              //console.log('two', this.$route.params.id);
+              this.getWatchData(videoId);
               alert('삭제되었습니다.');
             })
             .catch((error) => {
               console.log('deleteComent - error : ', error);
             });
+          }
           } else return;
         },
 
+
+
           async submitForm() {
           //console.log('비디오 아이디 찾아',this.watchVideo.id);
-
           await axios
             .post(process.env.VUE_APP_API + '/comments', {
               'text' : this.text,
@@ -318,6 +325,7 @@ if (videoId) {
             .then((response) => {
               console.log('submitForm - response : ', response);
               this.getWatchData(this.$route.params.id);
+              //console.log('ddd',this.$route.params.id);
               this.text = null;
               //console.log('submitForm함수 끝')
             })
@@ -327,6 +335,7 @@ if (videoId) {
         },
   },
   mounted() {
+    //console.log('sss',this.$route.params);
     this.getVideos();
     this.getWatchData(this.$route.params.id);
     //this.getComment();

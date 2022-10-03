@@ -1,7 +1,7 @@
 <template>
-  <v-card flat tile class="CommentList" router :to="`/watch/comments`">
+  <v-card flat tile class="CommentList">
     <div class="commentList">
-                  <v-row
+            <v-row
               class="spacer"
               no-gutters
             >
@@ -23,16 +23,24 @@
             <span class="comName">{{ comment.userId.channelName }}</span>
             <span class="comTime">{{ setCalDate(comment.createdAt) }}</span>
             <p class="comText">{{ comment.text }}</p>
-            <!-- <v-btn>댓글{{ comment.replies.length }}</v-btn> -->
+
             <div class="BBB" >
-              <v-btn>댓글{{ comment.replies.length }}</v-btn>
+              <v-btn @click="show = !show">댓글{{ comment.replies.length }}</v-btn>
+
                <v-btn icon class="delB" @click="deleteComment">
                  <v-icon>mdi-delete-forever</v-icon>
                </v-btn>
             </div>
       </div>
-              
-                  </v-row>
+    </v-row>
+
+          <v-expand-transition>
+        <div v-show="show">
+                <v-text-field id="AddReplycom" type="AddReplycom"  placeholder="댓글 추가하기"></v-text-field>
+                <!-- 대댓글 리스트 -->
+        </div>
+        </v-expand-transition>
+
     </div>
   </v-card>
 </template>
@@ -43,7 +51,7 @@ export default {
   name: 'CommentList',
   mixins: [SetFormat],
   data: () => ({
-    comments: [],
+    show: false,
   }),
   props: ['comment'],
 
@@ -53,7 +61,7 @@ export default {
   methods: {
     deleteComment(){
       this.$emit('deleteComment');
-    }
+    },
   },
 };
 </script>
@@ -63,6 +71,10 @@ export default {
     background-color: rgb(250, 250, 250) !important;
     padding: 15px;
 }
+
+/* .commentList {
+  border-bottom: 1px solid black;
+} */
 
 .comName {
   font-weight: bold;
