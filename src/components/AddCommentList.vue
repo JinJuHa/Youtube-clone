@@ -36,7 +36,7 @@ export default {
   data: () => ({
     replies: [],
   }),
-  props: ['reply'],
+  props: ['comment.replies'],
 
   computed: {
   },

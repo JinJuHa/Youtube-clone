@@ -57,9 +57,11 @@
           :key=" replies._id"
           :replies="replies" -->
             <v-card flat tile class="AddCommentList"
+              v-for="reply in  comment.replies"
+              :key="reply._id"
             >
                 <div class="AddList">
-                              <v-row
+                        <v-row
                           class="spacer"
                           no-gutters
                         >
@@ -69,15 +71,15 @@
                             md="1"
                           >
                 <div class="AddChannelProfile">
-                    <!-- <v-avatar size="27px" color="red" class="white--text">
-                      <h5>{{ comment.userId.channelName.split('')[0].toUpperCase() }}</h5>
-                    </v-avatar> -->
+                    <v-avatar size="27px" color="red" class="white--text">
+                      <h5>{{ reply.userId.channelName.split('')[0].toUpperCase() }}</h5>
+                    </v-avatar>
                   </div>
                   </v-col>
-                  <div class="commentchuga">
-                        <!-- <span class="comName">{{ comment.userId.channelName }}</span>
-                        <span class="comTime">{{ setCalDate(comment.createdAt) }}</span> -->
-                        <p class="comText">{{ comment.replies }}</p>
+                  <div class="commentchuga" >
+                        <span class="comName">{{ reply.userId.channelName }}</span>
+                        <span class="comTime">{{ setCalDate(reply.createdAt) }}</span>
+                        <p class="comText" >{{ reply.text }}</p>
                         <!-- <v-btn @click="deleteComment">삭제</v-btn> -->
                   </div>
                           
@@ -220,6 +222,11 @@ export default {
   box-shadow: none;
 } */
 .commentchuga {
+  background-color: rgb(250, 250, 250) !important;
+}
+
+.AddCommentList {
+  margin-top: 20px;
   background-color: rgb(250, 250, 250) !important;
 }
 
