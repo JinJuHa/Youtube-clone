@@ -43,12 +43,16 @@
           <div>
             <!-- <label class="commenTitle">댓글</label> -->
             <!-- <input class="commentAdd" type="commentAdd" v-model="text"> -->
-              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text">
+              <v-text-field id="commentAdd" type="commentAdd"  placeholder="댓글 추가하기" v-model="text" @click="show = !show">
               </v-text-field>
           </div>
-          <div class="commentAddB">
+      <v-expand-transition>
+        
+          <div v-show="show" class="commentAddB">
              <v-btn type="submit">입력</v-btn>
           </div>
+        
+      </v-expand-transition>
         </form>
     </div>
 
@@ -434,9 +438,12 @@ if (videoId) {
 .commentadd {
   margin: 10px;
 }
-
 .commentAddB {
+  margin-bottom: 20px;
+}
+/* .commentAddB {
+  width: 52vw;
   display: flex;
   justify-content: right;
-}
+} */
 </style>

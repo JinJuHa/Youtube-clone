@@ -80,7 +80,9 @@
                         <span class="comName">{{ reply.userId.channelName }}</span>
                         <span class="comTime">{{ setCalDate(reply.createdAt) }}</span>
                         <p class="comText" >{{ reply.text }}</p>
-                        <!-- <v-btn @click="deleteComment">삭제</v-btn> -->
+                        <!-- <v-btn icon class="delB" @click="deleteComment">
+                          <v-icon>mdi-delete-forever</v-icon>
+                        </v-btn> -->
                   </div>
                           
                               </v-row>
